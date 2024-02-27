@@ -9,12 +9,13 @@ class HomeController extends Controller
   public function index()
   {
     $contactModel = new Contact();
-    return $contactModel->where('id', '2')->get();
-    print_r($contacts);
+    $contactModel->delete(2);
 
-    return $this->view('home', [
-      'title' => 'Home',
-      'description' => 'This is the home page',
-    ]);
+    return "eliminado";
+
+    // return $this->view('home', [
+    //   'title' => 'Home',
+    //   'description' => 'This is the home page',
+    // ]);
   }
 }

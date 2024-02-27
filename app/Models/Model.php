@@ -29,9 +29,21 @@ class Model
     }
   }
 
-  public function query($sql)
+  public function query($sql, $data = [], $params = null)
   {
-    $this->query = $this->conn->query($sql);
+    if ($data) {
+
+      if ($params == null) {
+        $params = str_repeat('s', count($data));
+      }
+
+      $stmt = $this->conn->prepare($sql);
+      $stmt->bind_param($params, ...$data);
+      $stmt->execute();
+      $this->query = $stmt->get_result();
+    } else {
+      $this->query = $this->conn->query($sql);
+    }
     return $this;
   }
 
@@ -55,8 +67,8 @@ class Model
 
   public function find($id)
   {
-    $sql = "SELECT * FROM {$this->table} WHERE id = $id";
-    return $this->query($sql)->first();
+    $sql = "SELECT * FROM {$this->table} WHERE id = ?";
+    return $this->query($sql, [$id], 'i')->first();
   }
 
   public function where($column, $operador, $value = null)
@@ -66,8 +78,43 @@ class Model
       $operador = '=';
     }
 
-    $sql = "SELECT * FROM {$this->table} WHERE {$column} {$operador} {$value}";
-    $this->query($sql);
+    $sql = "SELECT * FROM {$this->table} WHERE {$column} {$operador} ?";
+    $this->query($sql, [$value]);
     return $this;
+  }
+
+  public function create($data)
+  {
+    $columns = array_keys($data);
+    $columns = implode(', ', $columns);
+
+    $values = array_values($data);
+    $sql = "INSERT INTO {$this->table} ({$columns}) VALUES (" . str_repeat('?, ', count($values) - 1) . "?)";
+
+    $this->query($sql, $values);
+    $insert_id = $this->conn->insert_id;
+
+    return $this->find($insert_id);
+  }
+
+  public function update($id, $data)
+  {
+    $fields = [];
+    foreach ($data as $key => $value) {
+      $fields[] = "{$key} = ?";
+    }
+    $fields = implode(', ', $fields);
+    $sql = "UPDATE {$this->table} SET {$fields} WHERE id = ?";
+    $values = array_values($data);
+    $values[] = $id;
+    $this->query($sql, $values);
+
+    return $this->find($id);
+  }
+
+  public function delete($id)
+  {
+    $sql = "DELETE FROM {$this->table} WHERE id = ?";
+    $this->query($sql, [$id], 'i');
   }
 }
