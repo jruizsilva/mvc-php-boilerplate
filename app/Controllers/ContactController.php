@@ -10,6 +10,11 @@ class ContactController extends Controller
   {
     $search = $_GET['search'] ?? '';
     $model = new Contact;
+
+    return $model->where('id', '>=', 2)
+      ->where('id', '<=', 6)
+      ->get();
+
     $contacts = !empty($search) ?
       $model->where('name', 'LIKE', "%" . "{$search}" . "%")->paginate(1) :
       $model->paginate(3);

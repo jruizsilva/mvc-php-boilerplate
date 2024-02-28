@@ -122,9 +122,13 @@ class Model
       $operador = '=';
     }
 
-    $this->sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} WHERE {$column} {$operador} ?";
-
-    $this->data[] = $value;
+    if (empty($this->sql)) {
+      $this->sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} WHERE {$column} {$operador} ?";
+      $this->data[] = $value;
+    } else {
+      $this->sql .= " AND {$column} {$operador} ?";
+      $this->data[] = $value;
+    }
 
     return $this;
   }
