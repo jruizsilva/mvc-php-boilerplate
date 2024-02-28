@@ -20,6 +20,10 @@
   <p>Telefono
     <?= $contact['phone'] ?>
   </p>
+
+  <form action="/contacts/<?= $contact['id'] ?>/delete" method="post">
+    <input type="submit" value="Eliminar">
+  </form>
 </body>
 
 </html>

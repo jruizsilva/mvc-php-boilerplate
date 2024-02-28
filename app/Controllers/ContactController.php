@@ -53,6 +53,9 @@ class ContactController extends Controller
 
   public function destroy($id)
   {
-    return "Aqui se procesara la eliminacion del contacto con id $id";
+    $model = new Contact;
+    $model->delete($id);
+
+    $this->redirect('/contacts');
   }
 }
