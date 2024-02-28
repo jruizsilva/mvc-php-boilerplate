@@ -57,6 +57,34 @@ class Model
     return $this->query->fetch_all(MYSQLI_ASSOC);
   }
 
+  public function paginate($cant = 15)
+  {
+    $page = $_GET['page'] ?? 1;
+    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} LIMIT " . ($page - 1) * $cant . ", {$cant}";
+    $data = $this->query($sql)->get();
+
+    $total = $this->query('SELECT FOUND_ROWS() as total')->first()['total'];
+
+    $uri = $_SERVER['REQUEST_URI'];
+    $uri = trim($uri, '/');
+
+    if (strpos($uri, '?') !== false) {
+      $uri = substr($uri, 0, strpos($uri, '?'));
+    }
+    $last_page = ceil($total / $cant);
+
+    return [
+      'total' => $total,
+      'from' => ($page - 1) * $cant + 1,
+      'to' => ($page - 1) * $cant + count($data),
+      'current_page' => $page,
+      'last_page' => $last_page,
+      'next_page_url' => $page < $last_page ? $uri . '?page=' . $page + 1 : null,
+      'prev_page_url' => $page > 1 ? '/' . $uri . '?page=' . $page - 1 : null,
+      'data' => $data
+    ];
+  }
+
   // Consultas
 
   public function all()

@@ -23,6 +23,10 @@ class Route
     $uri = $_SERVER['REQUEST_URI'];
     $uri = trim($uri, '/');
 
+    if (strpos($uri, '?') !== false) {
+      $uri = substr($uri, 0, strpos($uri, '?'));
+    }
+
     $method = $_SERVER['REQUEST_METHOD'];
 
     foreach (self::$routes[$method] as $route => $callback) {
