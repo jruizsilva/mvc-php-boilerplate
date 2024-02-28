@@ -14,6 +14,7 @@ class Model
   protected $query;
 
   protected $sql, $data = [], $params = null;
+  protected $orderBy = '';
 
   protected $table;
 
@@ -49,6 +50,12 @@ class Model
     return $this;
   }
 
+  public function orderBy($column, $order = 'ASC')
+  {
+    $this->orderBy = " ORDER BY {$column} {$order}";
+    return $this;
+  }
+
   public function first()
   {
     if (empty($this->query)) {
@@ -60,6 +67,7 @@ class Model
   public function get()
   {
     if (empty($this->query)) {
+      $this->sql .= $this->orderBy;
       $this->query($this->sql, $this->data, $this->params);
     }
     return $this->query->fetch_all(MYSQLI_ASSOC);

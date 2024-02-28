@@ -13,6 +13,7 @@ class ContactController extends Controller
 
     return $model->where('id', '>=', 2)
       ->where('id', '<=', 6)
+      ->orderBy('id', 'desc')
       ->get();
 
     $contacts = !empty($search) ?
