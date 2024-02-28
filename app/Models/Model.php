@@ -13,6 +13,8 @@ class Model
   protected $conn;
   protected $query;
 
+  protected $sql, $data = [], $params = null;
+
   protected $table;
 
   public function __construct()
@@ -49,19 +51,33 @@ class Model
 
   public function first()
   {
+    if (empty($this->query)) {
+      $this->query($this->sql, $this->data, $this->params);
+    }
     return $this->query->fetch_assoc();
   }
 
   public function get()
   {
+    if (empty($this->query)) {
+      $this->query($this->sql, $this->data, $this->params);
+    }
     return $this->query->fetch_all(MYSQLI_ASSOC);
   }
 
   public function paginate($cant = 15)
   {
     $page = $_GET['page'] ?? 1;
-    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} LIMIT " . ($page - 1) * $cant . ", {$cant}";
-    $data = $this->query($sql)->get();
+
+    if ($this->sql) {
+      $sql = $this->sql . " LIMIT " . ($page - 1) * $cant . ", {$cant}";
+      $data = $this->query($sql, $this->data, $this->params)->get();
+    } else {
+      $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} LIMIT " . ($page - 1) * $cant . ", {$cant}";
+      $data = $this->query($sql)->get();
+    }
+
+
 
     $total = $this->query('SELECT FOUND_ROWS() as total')->first()['total'];
 
@@ -106,8 +122,10 @@ class Model
       $operador = '=';
     }
 
-    $sql = "SELECT * FROM {$this->table} WHERE {$column} {$operador} ?";
-    $this->query($sql, [$value]);
+    $this->sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} WHERE {$column} {$operador} ?";
+
+    $this->data[] = $value;
+
     return $this;
   }
 

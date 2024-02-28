@@ -25,7 +25,7 @@
     </div>
     <div>
       <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-        <a href="<?= $$paginate['prev_page_url'] ?>"
+        <a href="<?= $$paginate['prev_page_url'] ?><?= !empty($search) && $$paginate['prev_page_url'] != null ? "&search=$search" : "" ?>"
           class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0">
           <span class="sr-only">Previous</span>
           <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -36,13 +36,13 @@
         </a>
         <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
         <?php for ($i = 1; $i <= $$paginate['last_page']; $i++): ?>
-          <a href="/contacts?page=<?= $i ?>"
+          <a href="/contacts?page=<?= $i ?><?= !empty($search) ? "&search=$search" : "" ?>"
             class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset focus:z-20 focus:outline-offset-0 <?= $$paginate['current_page'] == $i ? "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" : "ring-gray-300 hover:bg-gray-100" ?> ">
             <?= $i ?>
           </a>
         <?php endfor ?>
 
-        <a href="<?= $$paginate['next_page_url'] ?>"
+        <a href="<?= $$paginate['next_page_url'] ?><?= !empty($search) && $$paginate['next_page_url'] != null ? "&search=$search" : "" ?>"
           class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-100 focus:z-20 focus:outline-offset-0">
           <span class="sr-only">Next</span>
           <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

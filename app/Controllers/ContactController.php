@@ -8,9 +8,12 @@ class ContactController extends Controller
 {
   public function index()
   {
+    $search = $_GET['search'] ?? '';
     $model = new Contact;
-    $contacts = $model->paginate(3);
-    return $this->view('contacts.index', compact('contacts'));
+    $contacts = !empty($search) ?
+      $model->where('name', 'LIKE', "%" . "{$search}" . "%")->paginate(1) :
+      $model->paginate(3);
+    return $this->view('contacts.index', compact('contacts', 'search'));
   }
 
   public function create()
