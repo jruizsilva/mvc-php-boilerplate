@@ -9,6 +9,7 @@
 
 <body>
   <h1>Detalle de contactos</h1>
+  <a href="/contacts">Volver</a> |
   <a href="/contacts/<?= $contact['id'] ?>/edit">Editar</a>
   <p>Nombre
     <?= $contact['name'] ?>
