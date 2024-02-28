@@ -11,10 +11,9 @@ class ContactController extends Controller
     $search = $_GET['search'] ?? '';
     $model = new Contact;
 
-    return $model->where('id', '>=', 2)
-      ->where('id', '<=', 6)
-      ->orderBy('id', 'desc')
-      ->get();
+    return $model->where('id', ">", 4)
+      ->orderBy('id', 'ASC')
+      ->paginate(3);
 
     $contacts = !empty($search) ?
       $model->where('name', 'LIKE', "%" . "{$search}" . "%")->paginate(1) :

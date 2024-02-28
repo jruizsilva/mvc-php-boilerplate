@@ -52,13 +52,23 @@ class Model
 
   public function orderBy($column, $order = 'ASC')
   {
-    $this->orderBy = " ORDER BY {$column} {$order}";
+    if (empty($this->query)) {
+      $this->orderBy = " ORDER BY {$column} {$order}";
+    } else {
+      $this->orderBy .= ", {$column} {$order}";
+    }
     return $this;
   }
 
   public function first()
   {
     if (empty($this->query)) {
+      if (empty($this->sql)) {
+        $this->sql = "SELECT * FROM {$this->table}";
+      }
+
+      $this->sql .= $this->orderBy;
+
       $this->query($this->sql, $this->data, $this->params);
     }
     return $this->query->fetch_assoc();
@@ -67,6 +77,10 @@ class Model
   public function get()
   {
     if (empty($this->query)) {
+      if (empty($this->sql)) {
+        $this->sql = "SELECT * FROM {$this->table}";
+      }
+
       $this->sql .= $this->orderBy;
       $this->query($this->sql, $this->data, $this->params);
     }
@@ -78,14 +92,14 @@ class Model
     $page = $_GET['page'] ?? 1;
 
     if ($this->sql) {
-      $sql = $this->sql . " LIMIT " . ($page - 1) * $cant . ", {$cant}";
+      $sql = $this->sql . $this->orderBy . " LIMIT " . ($page - 1) * $cant . ", {$cant}";
       $data = $this->query($sql, $this->data, $this->params)->get();
     } else {
-      $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} LIMIT " . ($page - 1) * $cant . ", {$cant}";
+      $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} " . $this->orderBy . " LIMIT " . ($page - 1) * $cant . ", {$cant}";
+
+
       $data = $this->query($sql)->get();
     }
-
-
 
     $total = $this->query('SELECT FOUND_ROWS() as total')->first()['total'];
 
