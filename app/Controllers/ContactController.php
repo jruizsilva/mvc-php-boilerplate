@@ -12,7 +12,9 @@ class ContactController extends Controller
     $model = new Contact;
 
     return $model
-      ->paginate();
+      ->select("id", "name", "email")
+      ->where('id', '>', 4)
+      ->get();
 
     $contacts = !empty($search) ?
       $model->where('name', 'LIKE', "%" . "{$search}" . "%")->paginate(1) :

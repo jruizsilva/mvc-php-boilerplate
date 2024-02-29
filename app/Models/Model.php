@@ -51,6 +51,12 @@ class Model
     return $this;
   }
 
+  public function select(...$columns)
+  {
+    $this->select = implode(', ', $columns);
+    return $this;
+  }
+
   public function where($column, $operador, $value = null)
   {
     if ($value == null) {
