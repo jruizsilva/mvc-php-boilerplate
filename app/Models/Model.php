@@ -13,7 +13,7 @@ class Model
   protected $conn;
   protected $query;
 
-  protected $select = "*";
+  protected $select = "SQL_CALC_FOUND_ROWS *";
   protected $where, $values = [];
   protected $orderBy = '';
 
@@ -53,7 +53,7 @@ class Model
 
   public function select(...$columns)
   {
-    $this->select = implode(', ', $columns);
+    $this->select = "SQL_CALC_FOUND_ROWS " . implode(', ', $columns);
     return $this;
   }
 
